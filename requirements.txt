@@ -1,5 +1,5 @@
+numpy
+networkx
+osmnx
 flask
 flask-cors
-numpy
-osmnx
-networkx
