@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PATHFINDER 3D — Dijkstra vs A* vs BFS</title>
+<link rel="stylesheet" href="/static/css/style.css"/>
+</head>
+<body>
+
+<!-- ── TOP HEADER ── -->
+<div id="header">
+  <div id="logo">PATHFINDER <span>3D</span></div>
+  <div id="algo-labels">
+    <span class="label-d">■ DIJKSTRA</span>
+    <span class="label-a">■ A*</span>
+    <span class="label-b">■ BFS</span>
+  </div>
+  <div id="status">READY</div>
+</div>
+
+<!-- ── THREE.JS CANVAS ── -->
+<div id="canvas-container"></div>
+
+<!-- ── MAIN CONTROLS ── -->
+<div id="controls">
+  <button class="btn" onclick="generateMaze()">⬡ RANDOM MAZE</button>
+  <button class="btn" onclick="toggleStepMode()" style="border-color:#ff00aa;color:#ff00aa" id="step-toggle-btn">⊞ STEP MODE</button>
+  <button class="btn" onclick="setMode('start')">◉ SET START</button>
+  <button class="btn" onclick="setMode('end')">◎ SET END</button>
+  <button class="btn" onclick="setMode('wall')">▣ DRAW WALLS</button>
+  <button class="btn btn-run" onclick="runAlgorithms()">▶ RUN</button>
+  <button class="btn" onclick="toggleAI()"
+  style="border-color:#aa00ff;color:#aa00ff" id="ai-toggle-btn">
+  🧠 AI EXPLAIN
+   </button>
+  <div id="speed-wrap">
+    <span>⚡ SPEED</span>
+    <input type="range" id="speedSlider" min="1" max="10" value="5" oninput="updateSpeed(this.value)"/>
+    <span id="speedVal">5</span>
+  </div>
+  <button class="btn" onclick="resetGrid()">↺ RESET</button>
+  <button class="btn" onclick="initCity()" style="border-color:#cc00ff;color:#cc00ff">🏙️ CITY MAP</button>
+  <button class="btn" onclick="toggleRace()" style="border-color:#ff8800;color:#ff8800" id="race-toggle-btn">🏁 RACE MODE</button>
+  <button class="btn" onclick="toggleTSP()"
+  style="border-color:#ffdd00;color:#ffdd00" id="tsp-toggle-btn">
+  🎯 TSP MODE
+</button>
+</div>
+
+<!-- ── CITY CONTROLS ── -->
+<div id="city-controls" style="display:none">
+  <button class="btn btn-run" onclick="runCityDijkstra()">▶ RUN</button>
+  <button class="btn" onclick="toggleCityStepMode()"
+    style="border-color:#ff00aa;color:#ff00aa" id="city-step-btn">
+    ⊞ STEP
+  </button>
+  <button class="btn" onclick="toggleCityAI()"
+    style="border-color:#aa00ff;color:#aa00ff" id="city-ai-btn">
+    🧠 AI
+  </button>
+  <button class="btn" onclick="toggleCityTSP()"
+    style="border-color:#ffdd00;color:#ffdd00" id="city-tsp-btn">
+    🎯 TSP
+  </button>
+  <button class="btn" onclick="resetCity()">↺ RESET</button>
+  <button class="btn" onclick="exitCity()">⬡ BACK</button>
+</div>
+
+<!-- ── STATS PANEL ── -->
+<div id="stats-panel">
+  <div class="stats-title">[ ALGORITHM STATS ]</div>
+
+  <div class="algo-block">
+    <div class="algo-name dijkstra-color">DIJKSTRA</div>
+    <div class="stat-row">Visited <span id="d-visited">--</span></div>
+    <div class="stat-row">Path    <span id="d-path">--</span></div>
+    <div class="stat-row">Time    <span id="d-time">--</span></div>
+    <div class="stat-row">Found   <span id="d-found">--</span></div>
+  </div>
+
+  <div class="algo-block">
+    <div class="algo-name astar-color">A* SEARCH</div>
+    <div class="stat-row">Visited <span id="a-visited">--</span></div>
+    <div class="stat-row">Path    <span id="a-path">--</span></div>
+    <div class="stat-row">Time    <span id="a-time">--</span></div>
+    <div class="stat-row">Found   <span id="a-found">--</span></div>
+  </div>
+
+  <div class="algo-block">
+    <div class="algo-name bfs-color">BFS</div>
+    <div class="stat-row">Visited <span id="b-visited">--</span></div>
+    <div class="stat-row">Path    <span id="b-path">--</span></div>
+    <div class="stat-row">Time    <span id="b-time">--</span></div>
+    <div class="stat-row">Found   <span id="b-found">--</span></div>
+  </div>
+
+  <div class="winner-block" id="winner-block">
+    <div class="stats-title">[ WINNER ]</div>
+    <div id="winner-text">Run algorithms first</div>
+  </div>
+
+  <div class="stats-title" style="margin-top:16px">[ LEGEND ]</div>
+  <div class="legend-row"><span class="leg-box" style="background:#00ff88"></span>Start</div>
+  <div class="legend-row"><span class="leg-box" style="background:#ff3355"></span>End</div>
+  <div class="legend-row"><span class="leg-box" style="background:#334"></span>Wall</div>
+  <div class="legend-row"><span class="leg-box" style="background:#0055ff"></span>Dijkstra visited</div>
+  <div class="legend-row"><span class="leg-box" style="background:#880088"></span>A* visited</div>
+  <div class="legend-row"><span class="leg-box" style="background:#006644"></span>BFS visited</div>
+  <div class="legend-row"><span class="leg-box" style="background:#00d4ff"></span>Dijkstra path</div>
+  <div class="legend-row"><span class="leg-box" style="background:#ffdd00"></span>A* path</div>
+  <div class="legend-row"><span class="leg-box" style="background:#00ff88"></span>BFS path</div>
+
+  <div class="stats-title" style="margin-top:16px">[ LIVE COMPARISON ]</div>
+  <div id="chart-wrap">
+    <div class="chart-label">NODES VISITED</div>
+    <div class="bar-row">
+      <span class="bar-name dijkstra-color">D</span>
+      <div class="bar-track"><div class="bar-fill bar-d" id="bar-d-visited"></div></div>
+      <span class="bar-num" id="bnum-d-visited">0</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name astar-color">A</span>
+      <div class="bar-track"><div class="bar-fill bar-a" id="bar-a-visited"></div></div>
+      <span class="bar-num" id="bnum-a-visited">0</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name bfs-color">B</span>
+      <div class="bar-track"><div class="bar-fill bar-b" id="bar-b-visited"></div></div>
+      <span class="bar-num" id="bnum-b-visited">0</span>
+    </div>
+    <div class="chart-label" style="margin-top:10px">TIME (ms)</div>
+    <div class="bar-row">
+      <span class="bar-name dijkstra-color">D</span>
+      <div class="bar-track"><div class="bar-fill bar-d" id="bar-d-time"></div></div>
+      <span class="bar-num" id="bnum-d-time">0</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name astar-color">A</span>
+      <div class="bar-track"><div class="bar-fill bar-a" id="bar-a-time"></div></div>
+      <span class="bar-num" id="bnum-a-time">0</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-name bfs-color">B</span>
+      <div class="bar-track"><div class="bar-fill bar-b" id="bar-b-time"></div></div>
+      <span class="bar-num" id="bnum-b-time">0</span>
+    </div>
+  </div>
+
+  <div class="stats-title" style="margin-top:16px">[ COMPLEXITY ]</div>
+  <div class="stat-row">Dijkstra <span style="color:#0af">O((V+E) log V)</span></div>
+  <div class="stat-row">A*       <span style="color:#fd0">O((V+E) log V)</span></div>
+  <div class="stat-row">BFS      <span style="color:#0f8">O(V+E)</span></div>
+
+  <div id="city-result"></div>
+  <div id="map-result"></div>
+</div>
+
+<!-- ── STEP BY STEP PANEL ── -->
+<div id="step-panel" style="display:none">
+  <div id="step-header">
+    <span id="step-algo-name">DIJKSTRA</span>
+    <span id="step-counter">Step 0 / 0</span>
+  </div>
+  <div id="step-action">Press → to start stepping</div>
+  <div id="step-details">
+    <div class="step-row">Current Node <span id="step-curr">--</span></div>
+    <div class="step-row">Cost So Far  <span id="step-cost">--</span></div>
+    <div class="step-row">Heuristic    <span id="step-h">--</span></div>
+    <div class="step-row">F Score      <span id="step-f">--</span></div>
+    <div class="step-row">Neighbors    <span id="step-nb">--</span></div>
+    <div class="step-row">Visited      <span id="step-vis">--</span></div>
+  </div>
+  <div id="step-btns">
+    <button class="step-btn" onclick="stepBack()">← PREV</button>
+    <button class="step-btn step-btn-next" onclick="stepForward()">NEXT →</button>
+  </div>
+  <div id="step-algo-select">
+    <button class="step-algo-btn active" onclick="setStepAlgo('dijkstra',this)">DIJKSTRA</button>
+    <button class="step-algo-btn" onclick="setStepAlgo('astar',this)">A*</button>
+  </div>
+</div>
+
+<!-- ── RACE MODE PANEL ── -->
+<div id="race-panel" style="display:none">
+  <div id="race-title">⚡ ALGORITHM RACE</div>
+  <div id="race-status">Press RUN RACE to start</div>
+  <div class="race-row">
+    <div class="race-name dijkstra-color">DIJKSTRA</div>
+    <div class="race-track"><div class="race-bar bar-d" id="race-bar-d"></div></div>
+    <div class="race-info" id="race-info-d">0 nodes</div>
+  </div>
+  <div class="race-row">
+    <div class="race-name astar-color">A* SEARCH</div>
+    <div class="race-track"><div class="race-bar bar-a" id="race-bar-a"></div></div>
+    <div class="race-info" id="race-info-a">0 nodes</div>
+  </div>
+  <div class="race-row">
+    <div class="race-name bfs-color">BFS</div>
+    <div class="race-track"><div class="race-bar bar-b" id="race-bar-b"></div></div>
+    <div class="race-info" id="race-info-b">0 nodes</div>
+  </div>
+  <div id="race-winner"></div>
+  <button class="btn btn-run" style="width:100%;margin-top:10px" onclick="startRace()">🏁 RUN RACE</button>
+</div>
+
+<!-- ── TSP PANEL ── -->
+<div id="tsp-panel" style="display:none">
+  <div id="tsp-title">🎯 TSP — SALESMAN PROBLEM</div>
+  <div id="tsp-status">Click grid cells to add waypoints</div>
+  <div id="tsp-points-count">Points: 0 / 10</div>
+  <div id="tsp-results"></div>
+  <div style="display:flex;gap:6px;margin-top:10px">
+    <button class="step-btn" onclick="runTSP()">▶ SOLVE TSP</button>
+    <button class="step-btn" onclick="clearTSP()">↺ CLEAR</button>
+  </div>
+</div>
+
+<!-- ── AI EXPLAIN PANEL ── -->
+<div id="ai-panel" style="display:none">
+  <div id="ai-title">🧠 AI EXPLAIN</div>
+  <div id="ai-algo-tag">DIJKSTRA</div>
+  <div id="ai-step-num">Step 0 / 0</div>
+  <div id="ai-current-node">
+    <div class="ai-label">CURRENT NODE</div>
+    <div id="ai-node-val" class="ai-val">--</div>
+  </div>
+  <div id="ai-cost-row">
+    <div class="ai-label">COST FROM START</div>
+    <div id="ai-cost-val" class="ai-val">--</div>
+  </div>
+  <div id="ai-why">
+    <div class="ai-label">WHY THIS NODE?</div>
+    <div id="ai-why-val" class="ai-text">--</div>
+  </div>
+  <div id="ai-neighbors">
+    <div class="ai-label">NEIGHBORS</div>
+    <div id="ai-nb-val" class="ai-text">--</div>
+  </div>
+  <div id="ai-visited-row">
+    <div class="ai-label">TOTAL VISITED</div>
+    <div id="ai-vis-val" class="ai-val">--</div>
+  </div>
+  <div id="ai-insight">
+    <div class="ai-label">💡 INSIGHT</div>
+    <div id="ai-insight-val" class="ai-text">--</div>
+  </div>
+</div>
+
+<!-- ── MODE INDICATOR ── -->
+<div id="mode-indicator">MODE: WALL</div>
+
+<!-- ── SCRIPTS ── -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="/static/js/city.js"></script>
+<script src="/static/js/main.js"></script>
+<!-- CITY TSP PANEL -->
+<div id="city-tsp-panel" style="display:none;position:fixed;top:68px;left:14px;
+  width:260px;background:rgba(3,3,15,0.98);border:1px solid #ffdd00;
+  border-radius:6px;padding:14px;z-index:1003;
+  box-shadow:0 0 30px rgba(255,221,0,0.15)">
+  <div style="font-family:'Orbitron',monospace;font-size:0.75rem;
+    color:#ffdd00;letter-spacing:2px;text-shadow:0 0 10px #ffdd00;
+    margin-bottom:8px">🎯 CITY TSP</div>
+  <div id="city-tsp-status" style="font-family:monospace;font-size:0.65rem;
+    color:#304060;margin-bottom:6px">Search cities to add</div>
+  <div id="city-tsp-count" style="font-family:monospace;font-size:0.7rem;
+    color:#ffdd00;margin-bottom:8px">Cities: 0 / 8</div>
+  <div id="city-tsp-list" style="margin-bottom:10px;max-height:120px;overflow-y:auto"></div>
+  <div id="city-tsp-results"></div>
+  <div style="display:flex;gap:6px;margin-top:10px">
+    <button class="step-btn" onclick="runCityTSP()">▶ SOLVE</button>
+    <button class="step-btn" onclick="clearCityTSP()">↺ CLEAR</button>
+  </div>
+</div>
+</body>
+</html>
