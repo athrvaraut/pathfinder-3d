@@ -247,6 +247,92 @@
   </div>
 </div>
 
+<!-- ── WELCOME GUIDE ── -->
+<div id="guide-overlay">
+  <div id="guide-modal">
+    <div id="guide-header">
+      <div id="guide-logo">PATHFINDER <span>3D</span></div>
+      <div id="guide-subtitle">DAA PROJECT — ALGORITHM VISUALIZER</div>
+    </div>
+
+    <div id="guide-body">
+
+      <div class="guide-section">
+        <div class="guide-section-title">⌨️ KEYBOARD SHORTCUTS</div>
+        <div class="guide-grid">
+          <div class="guide-item"><span class="guide-key">M</span><span class="guide-desc">Generate random maze</span></div>
+          <div class="guide-item"><span class="guide-key">S</span><span class="guide-desc">Set start point (green)</span></div>
+          <div class="guide-item"><span class="guide-key">E</span><span class="guide-desc">Set end point (red)</span></div>
+          <div class="guide-item"><span class="guide-key">W</span><span class="guide-desc">Draw walls mode</span></div>
+          <div class="guide-item"><span class="guide-key">SPACE</span><span class="guide-desc">Run all 3 algorithms</span></div>
+          <div class="guide-item"><span class="guide-key">R</span><span class="guide-desc">Reset everything</span></div>
+          <div class="guide-item"><span class="guide-key">→</span><span class="guide-desc">Next step (step mode)</span></div>
+          <div class="guide-item"><span class="guide-key">←</span><span class="guide-desc">Previous step</span></div>
+          <div class="guide-item"><span class="guide-key">DRAG</span><span class="guide-desc">Rotate 3D view</span></div>
+          <div class="guide-item"><span class="guide-key">SCROLL</span><span class="guide-desc">Zoom in/out</span></div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🖱️ MOUSE CONTROLS</div>
+        <div class="guide-grid">
+          <div class="guide-item"><span class="guide-key">Left Click</span><span class="guide-desc">Place wall / select cell</span></div>
+          <div class="guide-item"><span class="guide-key">Right Click</span><span class="guide-desc">Erase wall</span></div>
+          <div class="guide-item"><span class="guide-key">Click+Drag</span><span class="guide-desc">Draw multiple walls</span></div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🔘 BUTTONS</div>
+        <div class="guide-grid">
+          <div class="guide-item"><span class="guide-key" style="border-color:#ff00aa;color:#ff00aa">⊞ STEP MODE</span><span class="guide-desc">Step through algorithm one node at a time</span></div>
+          <div class="guide-item"><span class="guide-key" style="border-color:#aa00ff;color:#aa00ff">🧠 AI EXPLAIN</span><span class="guide-desc">Live English explanation of each step</span></div>
+          <div class="guide-item"><span class="guide-key" style="border-color:#ff8800;color:#ff8800">🏁 RACE MODE</span><span class="guide-desc">Watch all 3 algorithms race live</span></div>
+          <div class="guide-item"><span class="guide-key" style="border-color:#ffdd00;color:#ffdd00">🎯 TSP MODE</span><span class="guide-desc">Click cells → find shortest tour (TSP)</span></div>
+          <div class="guide-item"><span class="guide-key" style="border-color:#cc00ff;color:#cc00ff">🏙️ CITY MAP</span><span class="guide-desc">World map — Dijkstra on real cities</span></div>
+          <div class="guide-item"><span class="guide-key">⚡ SPEED</span><span class="guide-desc">Control animation speed (1-10)</span></div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">🎨 COLOR LEGEND</div>
+        <div class="guide-grid">
+          <div class="guide-item"><span class="guide-dot" style="background:#00ff88"></span><span class="guide-desc">Start point</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#ff3355"></span><span class="guide-desc">End point</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#00d4ff"></span><span class="guide-desc">Dijkstra path</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#ffdd00"></span><span class="guide-desc">A* path</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#00ff88"></span><span class="guide-desc">BFS path</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#8B6914"></span><span class="guide-desc">Sand terrain (cost 3)</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#4a2800"></span><span class="guide-desc">Mud terrain (cost 4)</span></div>
+          <div class="guide-item"><span class="guide-dot" style="background:#0a2a6e"></span><span class="guide-desc">Water terrain (cost 5)</span></div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <div class="guide-section-title">📊 ALGORITHMS</div>
+        <div class="guide-grid">
+          <div class="guide-item"><span class="guide-key" style="color:#00d4ff;border-color:#00d4ff">Dijkstra</span><span class="guide-desc">Shortest path, weighted graph O((V+E) log V)</span></div>
+          <div class="guide-item"><span class="guide-key" style="color:#ffdd00;border-color:#ffdd00">A*</span><span class="guide-desc">Fastest, uses heuristic O((V+E) log V)</span></div>
+          <div class="guide-item"><span class="guide-key" style="color:#00ff88;border-color:#00ff88">BFS</span><span class="guide-desc">Unweighted shortest path O(V+E)</span></div>
+          <div class="guide-item"><span class="guide-key" style="color:#ffdd00;border-color:#ffdd00">TSP</span><span class="guide-desc">Visit all cities — Brute/Greedy/DP</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="guide-footer">
+      <div id="guide-tip">💡 TIP: Press M → S → E → SPACE to see algorithms in action!</div>
+      <button id="guide-close-btn" onclick="closeGuide()">
+        LET'S GO →
+      </button>
+      <div id="guide-checkbox">
+        <input type="checkbox" id="dont-show" onchange="toggleDontShow(this)"/>
+        <label for="dont-show">Don't show again</label>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── MODE INDICATOR ── -->
 <div id="mode-indicator">MODE: WALL</div>
 
