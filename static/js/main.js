@@ -1002,3 +1002,35 @@ window.stepBack = function() {
     updateAIPanel(stepData[stepIndex], stepIndex, stepData.length, stepAlgo);
   }
 };
+// ─────────────────────────────────────────────────────────────
+//  WELCOME GUIDE
+// ─────────────────────────────────────────────────────────────
+function closeGuide() {
+  const overlay = document.getElementById("guide-overlay");
+  overlay.style.opacity = "0";
+  overlay.style.transition = "opacity 0.3s ease";
+  setTimeout(() => overlay.style.display = "none", 300);
+}
+
+function toggleDontShow(checkbox) {
+  if (checkbox.checked) {
+    localStorage.setItem("pathfinder-guide-seen", "true");
+  } else {
+    localStorage.removeItem("pathfinder-guide-seen");
+  }
+}
+
+// Auto hide if seen before
+window.addEventListener("load", () => {
+  if (localStorage.getItem("pathfinder-guide-seen") === "true") {
+    document.getElementById("guide-overlay").style.display = "none";
+  }
+});
+
+// Press ESC to close guide
+window.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    const guide = document.getElementById("guide-overlay");
+    if (guide && guide.style.display !== "none") closeGuide();
+  }
+});
