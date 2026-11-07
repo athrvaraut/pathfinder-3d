@@ -55,27 +55,21 @@ PATHFINDER_3D/
 ├── config.py             # System variables and tuning parameters
 ├── grid.py               # 3D spatial coordinate generator
 └── Procfile              # Render deployment configuration
+```
 
-🛠️ Local Installation & Setup
-1. Clone the Repository
-Bash
-git clone [https://github.com/athrvaraut/pathfinder-3d.git](https://github.com/athrvaraut/pathfinder-3d.git)
+---
+
+## 🛠️ Run it locally
+
+Requires Python 3.10 or newer.
+
+```bash
+git clone https://github.com/athrvaraut/pathfinder-3d.git
 cd pathfinder-3d
-2. Environment Setup
-Ensure you have Python 3.10+ installed. Install the backend dependencies:
-
-Bash
 pip install -r requirements.txt
-3. Launch the Server
-Execute the main application server:
-
-Bash
 python app.py
-(The application will initialize the cache and open a local server port, typically accessible at http://127.0.0.1:5000)
+```
 
+Then open http://127.0.0.1:5000. The first start builds the route cache.
 
-### Why this structure works:
-* **Procfile Recognition:** Adding the `Procfile` to the folder structure explicitly shows recruiters that you know how to configure apps for cloud deployment (Render/Heroku), rather than just running scripts locally.
-* **Time Complexities:** Listing the mathematical Big-O notations for algorithms like D* Lite and Bidirectional search proves you understand the underlying mathematics, not just the code syntax. 
-
-Commit this directly to your main branch and your portfolio will be looking exceptionally strong!
+The live version runs on Render's free tier, so the first visit can take about a minute to wake up.
